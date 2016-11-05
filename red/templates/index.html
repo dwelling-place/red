@@ -1,14 +1,14 @@
 <!doctype html>
 <html>
 <head>
-  <title>Flaskr</title>
+  <title>ReD</title>
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
   <script src="{{ url_for('static', filename='dialog-polyfill/dialog-polyfill.js') }}"></script>
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='dialog-polyfill/dialog-polyfill.css') }}">
 </head>
 <body>
   <div class=page>
-    <h1>Flaskr</h1>
+    <h1>ReD</h1>
     <div class=metanav>
     {% if not session.logged_in %}
       <a href="{{ url_for('index') }}">log in</a>
@@ -40,8 +40,8 @@
   <script>
   function initMap() {
     var map = new google.maps.Map($('#map')[0], {
-      zoom: 4,
-      center: {lat: 42.96125, lng: -85.655719}
+      zoom: 9,
+      center: {lat: 42.96125, lng: -85.655719} // Grand Rapids, MI
     });
 
     $.getJSON('/projects', function(projects) {
