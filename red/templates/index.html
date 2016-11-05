@@ -8,26 +8,35 @@
 </head>
 <body>
   <div class=page>
+    <button id=addProject>Add Project</button>
     <h1>ReD</h1>
-    <div class=metanav>
-    {% if not session.logged_in %}
-      <a href="{{ url_for('index') }}">log in</a>
-    {% else %}
-      <a href="{{ url_for('index') }}">log out</a>
-    {% endif %}
-    </div>
+
     {% for message in get_flashed_messages() %}
       <div class=flash>{{ message }}</div>
     {% endfor %}
 
-    <ul id=projects></ul>
-
-    <div id=map></div>
-    <button>Add</button>
+    <ul id=projects></ul><div id=map></div>
   </div>
-  <dialog id="dlgLogin">
-  </dialog>
   <dialog id="dlgEditProject">
+    <form>
+      <label>Name: <input name=name type=text></label>
+      <label>Address: <textarea></textarea></label>
+      <label>Stage: <select>
+        <option>Conceptual</option>
+        <option>Funding Secured</option>
+        <option>Under Construction</option>
+        <option>Completed</option>
+        <option>Archived</option>
+      </select></label>
+      <label>Completion: <input type=range min=0 max=1 step=0.01></label>
+      <label>Start Date: <input type=date></label>
+      <label>End Date: <input type=date></label>
+      <label>PSH: <input type=number></label>
+      <label>Live/Work: <input type=number></label>
+      <label>Aff.: <input type=number></label>
+      <label>Commercial: <input type=number></label>
+      <label>Comments: <textarea></textarea></label>
+    </form>
   </dialog>
   <script>
   // Enable the dialog polyfill
@@ -83,10 +92,16 @@
         // Populate form
       });
     } else {
-      $('#dlgEditProject form').reset();
+      $('#dlgEditProject form')[0].reset();
       $('#dlgEditProject')[0].showModal();
     }
   }
+
+  $(function() {
+    $('#addProject').click(function() {
+      editProject();
+    });
+  });
   </script>
 </body>
 </html>
