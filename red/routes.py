@@ -42,6 +42,7 @@ class ProjectList(Resource):
 
     def post(self):
         res = mongo.db.projects.insert_one(request.form.to_dict())
-        return '', 201, {'Location': api.url_for(Project, projid=res.inserted_id)}
+        loc = api.url_for(Project, projid=res.inserted_id)
+        return loc, 201, {'Location': loc}
 
 api.add_resource(ProjectList, '/projects')

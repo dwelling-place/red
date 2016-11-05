@@ -20,8 +20,10 @@
       <div class=flash>{{ message }}</div>
     {% endfor %}
 
+    <ul id=projects></ul>
+
     <div id=map></div>
-    
+    <button>Add</button>
   </div>
   <dialog id="dlgLogin">
   </dialog>
@@ -49,6 +51,18 @@
       var gc = new google.maps.Geocoder();
       for (var proj of projects) {
         console.info(proj);
+
+        $('#projects').append(
+          $('<li>').data('id', proj._id).append(
+            $('<h3>').text(proj.name),
+            $('<div>').text(proj.stage).append(
+              typeof proj.completion == 'number' 
+              ? $('<progress max=1>').attr('value', proj.completion) 
+              : undefined
+            )
+          )
+        );
+
         gc.geocode({address: proj.address}, function(results, status) {
           var marker = new google.maps.Marker({
             position: results[0].geometry.location,
@@ -61,6 +75,18 @@
   </script>
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBc84LXXxfOLqDEu13u1fj_hwJSWs55VCY&callback=initMap">
+  </script>
+  <script>
+  function editProject(projid) {
+    if (projid != undefined) {
+      $.getJSON('/projects/'+projid, function(project) {
+        // Populate form
+      });
+    } else {
+      $('#dlgEditProject form').reset();
+      $('#dlgEditProject')[0].showModal();
+    }
+  }
   </script>
 </body>
 </html>
