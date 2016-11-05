@@ -29,6 +29,7 @@
   </dialog>
   <script>
   // Enable the dialog polyfill
+  // TODO: Handle dynamically-inserted dialog elements
   (function() {
     for (var dialog of document.querySelectorAll('dialog')) {
       dialogPolyfill.registerDialog(dialog);

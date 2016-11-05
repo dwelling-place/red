@@ -1,5 +1,5 @@
 from . import application
-from flask import render_template, url_for
+from flask import render_template, request
 from flask_restful import Resource, Api
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
@@ -23,7 +23,7 @@ class Project(Resource):
         return mongo.db.projects.find_one_or_404({'_id': projid})
 
     def put(self, projid):
-        mongo.db.projects.replace_one({'_id': projid}, request.form)
+        mongo.db.projects.replace_one({'_id': projid}, dict(request.form))
         return '', 204
 
     def delete(self, projid):
@@ -41,7 +41,7 @@ class ProjectList(Resource):
         ]
 
     def post(self):
-        res = mongo.db.projects.insert_one(request.form)
-        return '', 201, {'Location': url_for('.Project', projid=res.inserted_id)}
+        res = mongo.db.projects.insert_one(dict(request.form))
+        return '', 201, {'Location': api.url_for(Project, projid=res.inserted_id)}
 
 api.add_resource(ProjectList, '/projects')
