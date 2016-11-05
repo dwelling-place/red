@@ -1,16 +1,24 @@
+import json
 
-def test_get_projects(client):
-	assert client.get('/projects').status_code == 200
+def test_list(client):
+    assert client.get('/projects').status_code == 200
 
-def test_project(client):
-	resp = client.post('/projects', data={'name': 'spam'})
-	assert resp.status_code == 201
-	loc = resp.headers['Location']
-	assert loc
-	print(loc)
+def test_crud(client):
+    resp = client.post('/projects', data={'name': 'spam'})
+    assert resp.status_code == 201
+    loc = resp.headers['Location']
+    assert loc
+    print(loc)
 
-	assert client.get(loc).status_code == 200
+    resp = client.get(loc)
+    assert resp.status_code == 200
+    print(resp.json)
+    assert resp.json['name'] == 'spam'
 
-	assert client.put(loc, data={'name': 'eggs'}).status_code in (200, 202, 204)
+    assert client.put(loc, data={'name': 'eggs'}).status_code in (200, 202, 204)
 
-	assert client.delete(loc).status_code in (200, 202, 204)
+    resp = client.get(loc)
+    assert resp.status_code == 200
+    assert resp.json['name'] == 'eggs'
+
+    assert client.delete(loc).status_code in (200, 202, 204)

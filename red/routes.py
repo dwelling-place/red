@@ -20,14 +20,14 @@ def jsonify_doc(doc):
 
 class Project(Resource):
     def get(self, projid):
-        return mongo.db.projects.find_one_or_404({'_id': projid})
+        return jsonify_doc(mongo.db.projects.find_one_or_404({'_id': ObjectId(projid)}))
 
     def put(self, projid):
-        mongo.db.projects.replace_one({'_id': projid}, dict(request.form))
+        mongo.db.projects.replace_one({'_id': ObjectId(projid)}, request.form.to_dict())
         return '', 204
 
     def delete(self, projid):
-        mongo.db.projects.delete_one({'_id': projid})
+        mongo.db.projects.delete_one({'_id': ObjectId(projid)})
         return '', 204
 
 api.add_resource(Project, '/projects/<projid>')
@@ -41,7 +41,7 @@ class ProjectList(Resource):
         ]
 
     def post(self):
-        res = mongo.db.projects.insert_one(dict(request.form))
+        res = mongo.db.projects.insert_one(request.form.to_dict())
         return '', 201, {'Location': api.url_for(Project, projid=res.inserted_id)}
 
 api.add_resource(ProjectList, '/projects')
