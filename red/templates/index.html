@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+  <title>Flaskr</title>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='dialog-polyfill/dialog-polyfill.js') }}"></script>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='dialog-polyfill/dialog-polyfill.css') }}">
+</head>
+<body>
+  <div class=page>
+    <h1>Flaskr</h1>
+    <div class=metanav>
+    {% if not session.logged_in %}
+      <a href="{{ url_for('index') }}">log in</a>
+    {% else %}
+      <a href="{{ url_for('index') }}">log out</a>
+    {% endif %}
+    </div>
+    {% for message in get_flashed_messages() %}
+      <div class=flash>{{ message }}</div>
+    {% endfor %}
+
+    <div id=map></div>
+    
+  </div>
+  <dialog id="dlgLogin">
+  </dialog>
+  <dialog id="dlgEditProject">
+  </dialog>
+  <script>
+  // Enable the dialog polyfill
+  (function() {
+    for (var dialog of document.querySelectorAll('dialog')) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+  })();
+  </script>
+  <script src="{{ url_for('static', filename='jquery/dist/jquery.min.js') }}"></script>
+
+  <script>
+  function initMap() {
+    var map = new google.maps.Map($('#map')[0], {
+      zoom: 4,
+      center: {lat: 42.96125, lng: -85.655719}
+    });
+
+    $.getJSON('/projects', function(projects) {
+      var gc = new google.maps.Geocoder();
+      for (var proj of projects) {
+        console.info(proj);
+        gc.geocode({address: proj.address}, function(results, status) {
+          var marker = new google.maps.Marker({
+            position: results[0].geometry.location,
+            map: map
+          });
+        });
+      }
+    });
+  }
+  </script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBc84LXXxfOLqDEu13u1fj_hwJSWs55VCY&callback=initMap">
+  </script>
+</body>
+</html>
