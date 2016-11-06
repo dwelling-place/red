@@ -40,7 +40,10 @@
         </tr>
         <tr>
           <td><label>Completion:</label></td>
-          <td><input name=completion type=range min=0 max=1 step=0.01></td>
+          <td>
+            <input name=completion type=range min=0 max=1 step=0.01>
+            <span id=completion-preview
+          </td>
         </tr>
         <tr>
           <td><label>Start Date:</label></td>
@@ -61,6 +64,10 @@
         <tr>
           <td><label>Aff.:</label></td>
           <td><input name=affordable type=number></td>
+        </tr>
+        <tr>
+          <td>Total Units:</td>
+          <td id="unittotal"></td>
         </tr>
         <tr>
           <td><label>Commercial:</label></td>
@@ -97,16 +104,15 @@
     $.getJSON('/projects', function(projects) {
       var gc = new google.maps.Geocoder();
       for (var proj of projects) {
-        console.info(proj);
+        console.info('Populate', proj);
 
         $('#projects').append(
           $('<li>').data('id', proj._id).append(
             $('<h3>').text(proj.name),
-            $('<div>').text(proj.stage).append(
-              proj.completion.match(/[\d.]+/)
+            $('<div>').text(proj.stage),
+            proj.completion.match(/[\d.]+/)
               ? $('<progress max=1>').attr('value', proj.completion) 
               : undefined
-            )
           )
         );
 
@@ -203,6 +209,30 @@
     $('#projects').on('click', 'li', function(event) {
       editProject($(this).data('id'));
     });
+
+    function onchange(jq, callback) {
+      callback = callback.bind(jq[0]);
+      (new MutationObserver(callback)).observe(jq[0], {attributes: true});
+      jq.on('input change', callback);
+    }
+
+    onchange($('input[name=completion]'), function() {
+      $('#completion-preview').text(
+        Math.round(this.value * 100)
+      );
+    });
+
+    function updateSum() {
+      $('#unittotal').text(
+        parseInt($('input[name=psh]')[0].value || '0')
+        + parseInt($('input[name=livework]')[0].value || '0')
+        + parseInt($('input[name=affordable]')[0].value || '0')
+      );
+    }
+
+    onchange($('input[name=psh]'), updateSum);
+    onchange($('input[name=livework]'), updateSum);
+    onchange($('input[name=affordable]'), updateSum);
   });
   </script>
 </body>
