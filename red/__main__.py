@@ -1,8 +1,8 @@
 import red
 from werkzeug.serving import run_simple
 
-
-app = red.create_app()
+config = red.settings.get_config('dev')
+app = red.create_app(config)
 app.debug = True
 
 run_simple('localhost', 5000, app,

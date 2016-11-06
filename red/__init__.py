@@ -2,9 +2,9 @@ from flask import Flask
 
 __all__ = 'create_app',
 
-def create_app():
+def create_app(config):
 	application = Flask('red', instance_relative_config=True)
-	application.config.from_pyfile('application.cfg', silent=True)
+	application.config.from_object(config)
 
 	from .routes import blueprint, mongo, api
 
