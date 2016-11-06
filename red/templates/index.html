@@ -112,11 +112,12 @@
 
         if (proj.address) {
           gc.geocode({address: proj.address}, function(results, status) {
+            var proj = this;
             var marker = new google.maps.Marker({
               position: results[0].geometry.location,
-              map: map
+              map: map,
+              title: proj.name
             });
-            var proj = this;
 
             marker.addListener('click', function() {
               editProject(proj._id);
@@ -175,8 +176,13 @@
             document.location.reload();
           }
         });
-      };
+      } else {
+        $.post('/projects', data, function() {
+          document.location.reload();
+        });
+      }
     });
+
     $("#projDelete").click(function() {
       if (window.confirm("This will permanently delete the project and cannot be undone!")) {
         var projid = $('#dlgEditProject').data('id');

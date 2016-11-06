@@ -44,6 +44,9 @@ button.cancel {
 	float: right;
 }
 
+#projects li {
+	cursor: pointer;
+}
 #projects h3 {
 	margin-bottom: 0;
 }
