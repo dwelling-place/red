@@ -16,6 +16,10 @@
     {% endfor %}
 
     <ul id=projects></ul><div id=map></div>
+
+    <p>
+      <a href="{{ url_for('csvdownload')}}">Download as CSV</a>
+    </p>
   </div>
   <dialog id="dlgEditProject">
     <form>
