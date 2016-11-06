@@ -110,17 +110,19 @@
           )
         );
 
-        gc.geocode({address: proj.address}, function(results, status) {
-          var marker = new google.maps.Marker({
-            position: results[0].geometry.location,
-            map: map
-          });
-          var proj = this;
+        if (proj.address) {
+          gc.geocode({address: proj.address}, function(results, status) {
+            var marker = new google.maps.Marker({
+              position: results[0].geometry.location,
+              map: map
+            });
+            var proj = this;
 
-          marker.addListener('click', function() {
-            editProject(proj._id);
-          });
-        }.bind(proj));
+            marker.addListener('click', function() {
+              editProject(proj._id);
+            });
+          }.bind(proj));
+        }
       }
     });
   }
@@ -130,8 +132,9 @@
   </script>
   <script>
   function editProject(projid) {
+    console.info('Edit', projid);
+    $('#dlgEditProject').data('id', projid || null);
     if (projid != undefined) {
-      $('#dlgEditProject').data('id', projid);
       // We really really should have a local object store, or pass whole models, but meh
       $.getJSON('/projects/'+projid, function(project) {
         console.debug('editProject', project);
@@ -144,7 +147,8 @@
         $('#dlgEditProject')[0].showModal();
       });
     } else {
-      $('#dlgEditProject form')[0].reset();
+      $('#dlgEditProject').find('input').attr('value', '');
+      $('#dlgEditProject').find('textarea').text('');
       $("#projDelete").hide();
       $('#dlgEditProject')[0].showModal();
     }
@@ -156,11 +160,33 @@
     });
 
     $("#projSave").click(function() {
-
+      var projid = $('#dlgEditProject').data('id');
+      console.info("Save", projid);
+      var fd = new FormData($('#dlgEditProject form')[0]);
+      var data = {};
+      for (var prop of fd.keys()) {
+        data[prop] = fd.get(prop);
+      }
+      if (projid) {
+        $.ajax('/projects/'+projid, {
+          data: data,
+          method: 'PUT',
+          success: function() {
+            document.location.reload();
+          }
+        });
+      };
     });
     $("#projDelete").click(function() {
       if (window.confirm("This will permanently delete the project and cannot be undone!")) {
-        console.info("Delete");
+        var projid = $('#dlgEditProject').data('id');
+        console.info("Delete", projid);
+        $.ajax('/projects/'+projid, {
+          method: 'DELETE',
+          success: function() {
+            document.location.reload();
+          }
+        });
       }
     });
 
