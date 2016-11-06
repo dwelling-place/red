@@ -21,4 +21,5 @@ def test_crud(client):
     assert resp.status_code == 200
     assert resp.json['name'] == 'eggs'
 
-    assert client.delete(loc).status_code in (200, 202, 204)
+    resp = client.delete(loc)
+    assert resp.status_code in (200, 202, 204)
