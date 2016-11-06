@@ -35,3 +35,11 @@ h2              { font-size: 1.2em; }
 #addProject {
 	float: right;
 }
+
+td {
+	vertical-align: top;
+}
+
+button.cancel {
+	float: right;
+}
