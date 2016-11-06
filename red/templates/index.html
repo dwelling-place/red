@@ -103,7 +103,7 @@
           $('<li>').data('id', proj._id).append(
             $('<h3>').text(proj.name),
             $('<div>').text(proj.stage).append(
-              typeof proj.completion == 'number' 
+              proj.completion.match(/[\d.]+/)
               ? $('<progress max=1>').attr('value', proj.completion) 
               : undefined
             )

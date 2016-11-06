@@ -43,3 +43,7 @@ td {
 button.cancel {
 	float: right;
 }
+
+#projects h3 {
+	margin-bottom: 0;
+}
