@@ -1,19 +1,20 @@
 import csv
 import io
 from collections import OrderedDict
-from . import application
-from flask import render_template, request, make_response
+from flask import Blueprint, render_template, request, make_response
 from flask_restful import Resource, Api
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 
-mongo = PyMongo(application)
+blueprint = Blueprint('red', __name__)
 
-@application.route('/')
+mongo = PyMongo()
+
+@blueprint.route('/')
 def index():
     return render_template('index.html')
 
-api = Api(application)
+api = Api()
 
 def jsonify_doc(doc):
     return {
@@ -70,7 +71,7 @@ def value_display(k, v):
     elif k == 'completion':
         return float(v) * 100
 
-@application.route('/csv')
+@blueprint.route('/csv')
 def csvdownload():
     buf = io.StringIO()
     dw = csv.DictWriter(buf, FIELD_DISPLAY_NAMES.values());
