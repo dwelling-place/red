@@ -118,7 +118,7 @@
           var proj = this;
 
           marker.addListener('click', function() {
-            console.info('edit', proj);
+            editProject(proj._id);
           });
         }.bind(proj));
       }
@@ -134,7 +134,12 @@
       $('#dlgEditProject').data('id', projid);
       // We really really should have a local object store, or pass whole models, but meh
       $.getJSON('/projects/'+projid, function(project) {
+        console.debug('editProject', project);
         // Populate form
+        for (var prop in project) {
+          $('#dlgEditProject').find('input[name='+prop+']').attr('value', project[prop]);
+          $('#dlgEditProject').find('textarea[name='+prop+']').text(project[prop]);
+        }
         $("#projDelete").show();
         $('#dlgEditProject')[0].showModal();
       });
@@ -164,7 +169,7 @@
     });
 
     $('#projects').on('click', 'li', function(event) {
-      console.debug(this, event);
+      editProject($(this).data('id'));
     });
   });
   </script>
