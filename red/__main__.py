@@ -1,4 +1,8 @@
+"""
+Quick run a development server
+"""
 import red
+import red.settings
 from werkzeug.serving import run_simple
 
 config = red.settings.get_config('dev')
