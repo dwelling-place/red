@@ -1,8 +1,10 @@
-import red
+from red import create_app
+from red.settings import get_config
 import pytest
+
 
 @pytest.fixture
 def app():
-    # FIXME: Rebuild application every time
-    red.application.testing = True
-    return red.application
+    app = create_app(get_config('test'))
+    app.testing = True
+    return app

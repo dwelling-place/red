@@ -10,24 +10,35 @@ blueprint = Blueprint('red', __name__)
 
 mongo = PyMongo()
 
+
 @blueprint.route('/')
 def index():
     return render_template('index.html')
 
+
 api = Api()
+
 
 def jsonify_doc(doc):
     return {
         k: str(v) if isinstance(v, ObjectId) else v
-        for k,v in doc.items()
+        for k, v in doc.items()
     }
+
 
 class Project(Resource):
     def get(self, projid):
-        return jsonify_doc(mongo.db.projects.find_one_or_404({'_id': ObjectId(projid)}))
+        return jsonify_doc(
+            mongo.db.projects.find_one_or_404(
+                {'_id': ObjectId(projid)}
+            )
+        )
 
     def put(self, projid):
-        mongo.db.projects.replace_one({'_id': ObjectId(projid)}, request.form.to_dict())
+        mongo.db.projects.replace_one(
+            {'_id': ObjectId(projid)},
+            request.form.to_dict()
+        )
         return '', 204
 
     def delete(self, projid):
@@ -51,6 +62,7 @@ class ProjectList(Resource):
 
 api.add_resource(ProjectList, '/projects')
 
+
 FIELD_DISPLAY_NAMES = OrderedDict([
     ('name', 'Project'),
     ('address', 'Address'),
@@ -65,22 +77,24 @@ FIELD_DISPLAY_NAMES = OrderedDict([
     ('comments', 'Comments/Updates'),
 ])
 
+
 def value_display(k, v):
     if not v:
         return v
     elif k == 'completion':
         return float(v) * 100
 
+
 @blueprint.route('/csv')
 def csvdownload():
     buf = io.StringIO()
-    dw = csv.DictWriter(buf, FIELD_DISPLAY_NAMES.values());
+    dw = csv.DictWriter(buf, FIELD_DISPLAY_NAMES.values())
     dw.writeheader()
     for doc in mongo.db.projects.find():
         dw.writerow({
-            FIELD_DISPLAY_NAMES[k]: value_display(k, v) 
-            for k,v in doc.items() if k in FIELD_DISPLAY_NAMES})
-
+            FIELD_DISPLAY_NAMES[k]: value_display(k, v)
+            for k, v in doc.items() if k in FIELD_DISPLAY_NAMES
+        })
 
     r = make_response(buf.getvalue())
     r.headers['Content-Type'] = 'text/csv'

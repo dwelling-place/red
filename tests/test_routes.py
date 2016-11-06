@@ -1,7 +1,6 @@
-import json
-
 def test_list(client):
     assert client.get('/projects').status_code == 200
+
 
 def test_crud(client):
     resp = client.post('/projects', data={'name': 'spam'})
@@ -15,7 +14,8 @@ def test_crud(client):
     print(resp.json)
     assert resp.json['name'] == 'spam'
 
-    assert client.put(loc, data={'name': 'eggs'}).status_code in (200, 202, 204)
+    resp = client.put(loc, data={'name': 'eggs'})
+    assert resp.status_code in (200, 202, 204)
 
     resp = client.get(loc)
     assert resp.status_code == 200
